@@ -14,7 +14,7 @@ class Generic_Serenade:
     def set_rank(self, rank : list):
         self.__rank = rank
 
-class Serenading(Generic_Serenade):
+class Serenader(Generic_Serenade):
     def get_name_of_first(self):
         return self.get_rank()[1].get_name()
 
@@ -25,12 +25,11 @@ class Serenading(Generic_Serenade):
         self.get_rank().pop(1)
 
 class Serenaded(Generic_Serenade):
-
     def __init__(self, name: str, nmax : int):
         super().__init__(name)
         self.__nmax = nmax
-        self.__serenading_by : list = []
-        self.__nb_serenades : int = 0
+        self.__nb_serenades: int = 0
+        self.__serenaded_by : list = []
 
     def get_nmax(self):
         return self.__nmax
@@ -38,157 +37,69 @@ class Serenaded(Generic_Serenade):
     def get_nb_serenades(self):
         return self.__nb_serenades
 
-    """
-    def set_students_rank(self, students_rank : list):
-        self.__students_rank = students_rank
-        self.__serenading_students = [False] * len(self.__students_rank)
+    def set_rank(self, rank : list):
+        super().set_rank(rank)
+        self.__serenaded_by = [False] * len(self.get_rank())
 
-    def get_student_rank(self, student : Students):
+    def __get_serenader_rank(self, serenader : Serenader):
         i = 0
-        while i < len(self.__students_rank) and self.__students_rank[i] != student:
+        while i < len(self.get_rank()) and self.get_rank()[i] != serenader:
             i += 1
         return i
 
-    def rank_student (self, student : Students):
-        self.__serenading_students[self.get_student_rank(student) - 1] = True
+    def rank_serenader (self, serenader : Serenader):
+        self.__serenaded_by[self.__get_serenader_rank(serenader) - 1] = True
         self.__nb_serenades += 1
 
-    def reply_to_students(self):
-        accepted_students : int = 0
-        for i in range(len(self.__serenading_students)):
-            if accepted_students < self.__nmax_students and self.__serenading_students[i]:
-                accepted_students += 1
-            elif self.__serenading_students[i]:
-                self.__students_rank[i].school_refused()
+    def reply_to_serenaders(self):
+        accepted_serenaders : int = 0
+        for i in range(len(self.__serenaded_by)):
+            if accepted_serenaders < self.__nmax and self.__serenaded_by[i]:
+                accepted_serenaders += 1
+            elif self.__serenaded_by[i]:
+                self.get_rank()[i].refused()
 
     def reset_serenades(self):
         self.__nb_serenades = 0
-        self.__serenading_students = [False] * len(self.__students_rank)
+        self.__serenaded_by = [False] * len(self.__serenaded_by)
 
-    def get_serenading_students(self):
-        serenading_students = []
-        for i in range(len(self.__serenading_students)):
-            if self.__serenading_students[i]:
-                serenading_students.append(self.__students_rank[i])
-        return serenading_students
-    """
+    def get_serenaders(self):
+        serenaders = []
+        for i in range(len(self.__serenaded_by)):
+            if self.__serenaded_by[i]:
+                serenaders.append(self.get_rank()[i])
+        return serenaders
 
+serenader1 = Serenader("Esteban")
+serenader2 = Serenader("Antoine")
+serenader3 = Serenader("Yvan")
 
-class Students:
-    def __init__(self, name: str):
-        self.__name : str = name
-        self.__schools_rank : list = []
+serenaded1 = Serenaded("N7", 1)
+serenaded2 = Serenaded("X", 1)
+serenaded3 = Serenaded("A7", 1)
 
-    def get_name(self):
-        return self.__name
+serenader1.set_rank([serenaded2, serenaded1, serenaded3])
+serenader2.set_rank([serenaded1, serenaded2, serenaded3])
+serenader3.set_rank([serenaded1, serenaded2, serenaded3])
 
-    def get_schools_rank(self):
-        return self.__schools_rank
-
-    def get_first_school_name(self):
-        return self.__schools_rank[1].get_name()
-
-    def set_schools_rank(self, schools_rank : list):
-        self.__schools_rank = schools_rank
-
-    def serenade_school(self):
-        self.__schools_rank[1].rank_student(self)
-
-    def school_refused(self):
-        self.__schools_rank.pop(1)
-
-class Schools:
-    def __init__(self, name: str, nmax_students : int):
-        self.__name : str = name
-        self.__nmax_students = nmax_students
-        self.__students_rank : list = []
-        self.__serenading_students : list = []
-        self.__nb_serenades : int = 0
-
-    def get_name(self):
-        return self.__name
-
-    def get_nmax_students(self):
-        return self.__nmax_students
-
-    def get_nb_serenades(self):
-        return self.__nb_serenades
-
-    def set_students_rank(self, students_rank : list):
-        self.__students_rank = students_rank
-        self.__serenading_students = [False] * len(self.__students_rank)
-
-    def get_student_rank(self, student : Students):
-        i = 0
-        while i < len(self.__students_rank) and self.__students_rank[i] != student:
-            i += 1
-        return i
-
-    def rank_student (self, student : Students):
-        self.__serenading_students[self.get_student_rank(student) - 1] = True
-        self.__nb_serenades += 1
-
-    def reply_to_students(self):
-        accepted_students : int = 0
-        for i in range(len(self.__serenading_students)):
-            if accepted_students < self.__nmax_students and self.__serenading_students[i]:
-                accepted_students += 1
-            elif self.__serenading_students[i]:
-                self.__students_rank[i].school_refused()
-
-    def reset_serenades(self):
-        self.__nb_serenades = 0
-        self.__serenading_students = [False] * len(self.__students_rank)
-
-    def get_serenading_students(self):
-        serenading_students = []
-        for i in range(len(self.__serenading_students)):
-            if self.__serenading_students[i]:
-                serenading_students.append(self.__students_rank[i])
-        return serenading_students
-
-class BadYamlIntegrityError(Exception):
-    pass
-
-def check_yaml(sources : list):
-    print("Checking YAML file integrity...")
-    if "students_serenading" not in sources:
-        print("students_serenading boolean is missing")
-        raise BadYamlIntegrityError
-
-
-
-
-student1 = Students("Esteban")
-student2 = Students("Antoine")
-student3 = Students("Yvan")
-
-school1 = Schools("N7", 1)
-school2 = Schools("X", 1)
-school3 = Schools("A7", 1)
-
-student1.set_schools_rank([school2, school1, school3])
-student2.set_schools_rank([school1, school2, school3])
-student3.set_schools_rank([school1, school2, school3])
-
-school1.set_students_rank([student1, student3, student2])
-school2.set_students_rank([student2, student1, student3])
-school3.set_students_rank([student3, student1, student2])
+serenaded1.set_rank([serenader1, serenader3, serenader2])
+serenaded2.set_rank([serenader2, serenader1, serenader3])
+serenaded3.set_rank([serenader3, serenader1, serenader2])
 
 serenade_end = False
 while not serenade_end:
     serenade_end = True
-    for student in [student1, student2, student3]:
-        student.serenade_school()
-    for school in [school1, school2, school3]:
-        school.reply_to_students()
-    for school in [school1, school2, school3]:
-        if school.get_nmax_students() > school.get_nb_serenades():
+    for serenader in [serenader1, serenader2, serenader3]:
+        serenader.serenade()
+    for serenaded in [serenaded1, serenaded2, serenaded3]:
+        serenaded.reply_to_serenaders()
+    for serenaded in [serenaded1, serenaded2, serenaded3]:
+        if serenaded.get_nmax() > serenaded.get_nb_serenades():
             serenade_end = False
-        school.reset_serenades()
+        serenaded.reset_serenades()
 
-for student in [student1, student2, student3]:
-    print(f"{student.get_name()} : {student.get_first_school_name()}")
+for serenader in [serenader1, serenader2, serenader3]:
+    print(f"{serenader.get_name()} : {serenader.get_name_of_first()}")
 
 sources = yaml.load(open("sources.yml"), Loader=yaml.Loader)
-check_yaml(sources)
+#check_yaml(sources)
