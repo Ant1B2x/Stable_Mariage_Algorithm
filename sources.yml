@@ -1,9 +1,22 @@
-students_serenading: True
-students:
-  - "Esteban" : ["X","N7","A7"]
-  - "Antoine" : ["N7","X","A7"]
-  - "Yvan" : ["N7","X","A7"]
-schools:
-  - "N7" : ["Esteban", "Yvan", "Antoine"]
-  - "X" : ["Antoine", "Esteban", "Yvan"]
-  - "A7" : ["Yvan", "Esteban", "Antoine"]
+group1_serenading: True
+group1:
+  - name: "Esteban"
+    rank: ["X","N7","A7"]
+    nmax: 1
+  - name: "Antoine"
+    rank: ["N7","X","A7"]
+    nmax: 1
+  - name: "Yvan"
+    rank: ["N7","X","A7"]
+    nmax: 1
+
+group2:
+  - name: "N7"
+    rank: ["Esteban", "Yvan", "Antoine"]
+    nmax: 1
+  - name: "X"
+    rank: ["Antoine", "Esteban", "Yvan"]
+    nmax: 1
+  - name: "A7"
+    rank: ["Yvan", "Esteban", "Antoine"]
+    nmax: 1
