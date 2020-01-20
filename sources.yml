@@ -1,0 +1,12 @@
+students :
+  - {
+    name: Esteban
+    schools_rank: [N7,X,A7]
+  }
+
+
+schools :
+  - {
+      name : N7
+      students_rank : [Esteban]
+  }
