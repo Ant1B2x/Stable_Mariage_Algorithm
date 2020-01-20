@@ -1,12 +1,9 @@
-students :
-  - {
-    name: Esteban
-    schools_rank: [N7,X,A7]
-  }
-
-
-schools :
-  - {
-      name : N7
-      students_rank : [Esteban]
-  }
+students_serenading: True
+students:
+  - "Esteban" : ["X","N7","A7"]
+  - "Antoine" : ["N7","X","A7"]
+  - "Yvan" : ["N7","X","A7"]
+schools:
+  - "N7" : ["Esteban", "Yvan", "Antoine"]
+  - "X" : ["Antoine", "Esteban", "Yvan"]
+  - "A7" : ["Yvan", "Esteban", "Antoine"]
