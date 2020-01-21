@@ -16,13 +16,15 @@ class Generic_Serenade:
 
 class Serenader(Generic_Serenade):
     def get_name_of_first(self):
-        return self.get_rank()[1].get_name()
+        #return self.get_rank()[0].get_name()
+        return next(iter(self.get_rank())).get_name()
 
     def serenade(self):
-        self.get_rank()[1].rank_serenader(self)
+        #self.get_rank()[0].rank_serenader(self)
+        next(iter(self.get_rank())).rank_serenader(self)
 
     def refused(self):
-        self.get_rank().pop(1)
+        self.get_rank().pop(0)
 
 class Serenaded(Generic_Serenade):
     def __init__(self, name: str, nmax : int):
@@ -63,25 +65,32 @@ class YAMLIntegrityError(Exception):
     pass
 
 def stable_mariage_algorithm(sources):
+    group1_serenading : bool = sources["group1_serenading"]
+    group1_elements : list = sources["group1"]
+    group2_elements : list = sources["group2"]
+
     serenaders : dict = {}
     serenadeds : dict = {}
 
-    if sources["group1_serenading"]:
-        for element in sources["group1"]:
-            serenaders[element["name"]] = Serenader(element["name"])
-        for element in sources["group2"]:
-            serenadeds[element["name"]] = Serenaded(element["name"], element["nmax"])
+    if group1_serenading:
+        for element1, element2 in zip(group1_elements, group2_elements):
+            serenaders[element1["name"]] = Serenader(element1["name"])
+            serenadeds[element2["name"]] = Serenaded(element2["name"], element2["nmax"])
     else:
-        for element in sources["group1"]:
-            serenadeds[element["name"]] = Serenaded(element["name"], element["nmax"])
-        for element in sources["group2"]:
-            serenaders[element["name"]] = Serenader(element["name"])
+        for element1, element2 in zip(group1_elements, group2_elements):
+            serenadeds[element1["name"]] = Serenaded(element1["name"], element1["nmax"])
+            serenaders[element2["name"]] = Serenader(element2["name"])
 
-    for element1, element2 in zip(sources["group1"], sources["group2"]):
-        if sources["group1_serenading"]:
+    for element1, element2 in zip(group1_elements, group2_elements):
+        if group1_serenading:
+
+            """serenaders[element1["name"]].set_rank( list().insert(rank_key, serenadeds[element1["rank"][rank_key]]) for rank_key in element1["rank"] )
+            serenadeds[element2["name"]].set_rank ( list().insert(rank_key, serenaders[element2["rank"][rank_key]]) for rank_key in element2["rank"] )"""
+
             rank: list = []
             for rank_key in element1["rank"]:
                 rank.insert(rank_key, serenadeds[element1["rank"][rank_key]])
+
             serenaders[element1["name"]].set_rank(rank)
             rank: list = []
             for rank_key in element2["rank"]:
@@ -186,6 +195,6 @@ def check_yaml(sources):
     print("********************************")
 
 if __name__ == "__main__":
-    sources = yaml.load(open("sources.yml"), Loader=yaml.Loader)
+    sources = yaml.load(open("sources2.yml"), Loader=yaml.Loader)
     #check_yaml(sources)
     stable_mariage_algorithm(sources)

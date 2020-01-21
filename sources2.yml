@@ -1,0 +1,63 @@
+group1_serenading: True
+group1:
+  - name: "A"
+    rank:
+      1: "Gamma"
+      2: "Delta"
+      3: "Alpha"
+      4: "Beta"
+    nmax: 1
+  - name: "B"
+    rank:
+      1: "Delta"
+      2: "Alpha"
+      3: "Beta"
+      4: "Gamma"
+    nmax: 1
+  - name: "C"
+    rank:
+      1: "Alpha"
+      2: "Beta"
+      3: "Gamma"
+      4: "Delta"
+    nmax: 1
+  - name: "D"
+    rank:
+      1: "Delta"
+      2: "Gamma"
+      3: "Alpha"
+      4: "Beta"
+    nmax: 1
+
+group2:
+  - name: "Alpha"
+    rank:
+      1: "A"
+      2: "B"
+      3: "C"
+      4: "D"
+    nmax: 1
+
+  - name: "Beta"
+    rank:
+      1: "A"
+      2: "B"
+      3: "C"
+      4: "D"
+    nmax: 1
+
+  - name: "Gamma"
+    rank:
+      1: "B"
+      2: "C"
+      3: "A"
+      4: "D"
+    nmax: 1
+
+  - name: "Delta"
+    rank:
+      1: "C"
+      2: "A"
+      3: "B"
+      4: "D"
+    nmax: 1
