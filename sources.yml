@@ -1,22 +1,42 @@
 group1_serenading: True
 group1:
   - name: "Esteban"
-    rank: ["X","N7","A7"]
+    rank:
+      1: "X"
+      2: "N7"
+      3: "A7"
     nmax: 1
   - name: "Antoine"
-    rank: ["N7","X","A7"]
+    rank:
+      1: "N7"
+      2: "X"
+      3: "A7"
     nmax: 1
   - name: "Yvan"
-    rank: ["N7","X","A7"]
+    rank:
+      1: "N7"
+      2: "X"
+      3: "A7"
     nmax: 1
 
 group2:
   - name: "N7"
-    rank: ["Esteban", "Yvan", "Antoine"]
+    rank:
+      1: "Esteban"
+      2: "Yvan"
+      3: "Antoine"
     nmax: 1
+
   - name: "X"
-    rank: ["Antoine", "Esteban", "Yvan"]
+    rank:
+      1: "Antoine"
+      2: "Esteban"
+      3: "Yvan"
     nmax: 1
+
   - name: "A7"
-    rank: ["Yvan", "Esteban", "Antoine"]
+    rank:
+      1: "Yvan"
+      2: "Esteban"
+      3: "Antoine"
     nmax: 1
