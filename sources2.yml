@@ -1,4 +1,4 @@
-group1_serenading: False
+group1_serenading: True
 group1:
   - name: "A"
     rank:

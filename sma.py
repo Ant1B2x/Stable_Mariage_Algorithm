@@ -1,9 +1,12 @@
+# encoding: utf-8
+import sys
 import yaml
 
-class Generic_Serenade:
+""" Parent class of Serenaded / Serenader """
+class __Parent_Serenade:
     def __init__(self, name : str):
         self.__name: str = name
-        self.__rank: list = []
+        self.__rank: list = [] # rank of the preferred member of the other group, less is better
 
     def get_name(self):
         return self.__name
@@ -14,23 +17,23 @@ class Generic_Serenade:
     def set_rank(self, rank : list):
         self.__rank = rank
 
-class Serenader(Generic_Serenade):
+""" Represents a Serenader """
+class Serenader(__Parent_Serenade):
     def get_name_of_first(self):
-        #return self.get_rank()[0].get_name()
         return next(iter(self.get_rank())).get_name()
 
     def serenade(self):
-        #self.get_rank()[0].rank_serenader(self)
         next(iter(self.get_rank())).rank_serenader(self)
 
     def refused(self):
         self.get_rank().pop(0)
 
-class Serenaded(Generic_Serenade):
+""" Represents a Serenaded """
+class Serenaded(__Parent_Serenade):
     def __init__(self, name: str, nmax : int):
         super().__init__(name)
         self.__nmax : int = nmax
-        self.__serenades : dict = {} # serenaders_rank / serenaders
+        self.__serenades : dict = {} # contains {serenader_rank : serenader}
 
     def get_nmax(self):
         return self.__nmax
@@ -55,27 +58,25 @@ class Serenaded(Generic_Serenade):
 
     def reply_to_serenaders(self):
         accepted_serenaders : int = 0
-        for rank in sorted(self.__serenades.keys()):
+        for rank in sorted(self.__serenades):
             if accepted_serenaders < self.get_nmax():
                 accepted_serenaders += 1
             else:
                 self.__serenades[rank].refused()
 
-class YAMLIntegrityError(Exception):
-    pass
-
+""" Check integrity of the YAML source file """
 def check_yaml(sources):
     print("********************************")
     print("Checking YAML file integrity...")
     if "group1_serenading" not in sources.keys():
         print("missing group1_serenading boolean")
-        raise YAMLIntegrityError
+        sys.exit(-1)
     if "group1" not in sources.keys():
         print("missing group1 list")
-        raise YAMLIntegrityError
+        sys.exit(-1)
     if "group2" not in sources.keys():
         print("missing group2 list")
-        raise YAMLIntegrityError
+        sys.exit(-1)
     group1_serenading : bool = sources["group1_serenading"]
     group1 : list = sources["group1"]
     group2 : list = sources["group2"]
@@ -83,20 +84,20 @@ def check_yaml(sources):
         for key in ["name", "rank", "nmax"] if not group1_serenading else ["name", "rank"]:
             if key not in group1[i]:
                 print(f"{key} key missing in group1, element {i}")
-                raise YAMLIntegrityError
+                sys.exit(-1)
     for i in range(len(group2)):
         for key in ["name", "rank", "nmax"] if group1_serenading else ["name", "rank"]:
             if key not in group2[i]:
                 print(f"{key} key missing in group2, element {i}")
-                raise YAMLIntegrityError
+                sys.exit(-1)
 
     if len( list(element["name"] for element in group1) ) != len( set(element["name"] for element in group1) ):
         print("group1 has duplicate")
-        raise YAMLIntegrityError
+        sys.exit(-1)
 
     if len( list(element["name"] for element in group2) ) != len( set(element["name"] for element in group2) ):
         print("group2 has duplicate")
-        raise YAMLIntegrityError
+        sys.exit(-1)
 
     group1_names : set = set(element["name"] for element in group1)
     group2_names : set = set(element["name"] for element in group2)
@@ -104,12 +105,12 @@ def check_yaml(sources):
         for rank_element in element["rank"]:
             if rank_element not in group2_names:
                 print(f"{rank_element} not in group2 names")
-                raise YAMLIntegrityError
+                sys.exit(-1)
     for element in group2:
         for rank_element in element["rank"]:
             if rank_element not in group1_names:
                 print(f"{rank_element} not in group1 names")
-                raise YAMLIntegrityError
+                sys.exit(-1)
 
     for element in group1:
         if len(element["rank"]) < len(group2_names):
@@ -137,47 +138,61 @@ def check_yaml(sources):
                 print(f"nmax > group1 length at group2, element {element['name']}")
     print("********************************")
 
-def stable_mariage_algorithm(sources):
+""" Our implementation of stable marriage algorithm :) """
+def stable_marriage_algorithm(sources):
+    serenaders: dict = {} # contains {serenader_name : serenader_object}
+    serenadeds: dict = {} # contains {serenaded_name : serenaded_object}
+    """ Decode sources """
     group1_serenading : bool = sources["group1_serenading"]
     group1_elements : list = sources["group1"]
     group2_elements : list = sources["group2"]
-
-    serenaders : dict = {}
-    serenadeds : dict = {}
-
+    """ Fill serenaders/serenadeds dictionaries 
+    Then, fill serenaders/serenadeds rank dictionaries """
     if group1_serenading:
         for element1, element2 in zip(group1_elements, group2_elements):
             serenaders[element1["name"]] = Serenader(element1["name"])
             serenadeds[element2["name"]] = Serenaded(element2["name"], element2["nmax"])
+        for element1, element2 in zip(group1_elements, group2_elements):
+            serenaders[element1["name"]].set_rank([serenadeds[element1["rank"][rank_key]] for rank_key in sorted(element1["rank"])])
+            serenadeds[element2["name"]].set_rank([serenaders[element2["rank"][rank_key]] for rank_key in sorted(element2["rank"])])
     else:
         for element1, element2 in zip(group1_elements, group2_elements):
             serenadeds[element1["name"]] = Serenaded(element1["name"], element1["nmax"])
             serenaders[element2["name"]] = Serenader(element2["name"])
+        for element1, element2 in zip(group1_elements, group2_elements):
+            serenadeds[element1["name"]].set_rank([serenaders[element1["rank"][rank_key]] for rank_key in sorted(element1["rank"])])
+            serenaders[element2["name"]].set_rank([serenadeds[element2["rank"][rank_key]] for rank_key in sorted(element2["rank"])])
 
-    for element1, element2 in zip(group1_elements, group2_elements):
-        if group1_serenading:
-            serenaders[element1["name"]].set_rank( [serenadeds[element1["rank"][rank_key]] for rank_key in sorted(element1["rank"])] )
-            serenadeds[element2["name"]].set_rank( [serenaders[element2["rank"][rank_key]] for rank_key in sorted(element2["rank"])] )
-        else:
-            serenadeds[element1["name"]].set_rank( [serenaders[element1["rank"]][rank_key] for rank_key in sorted(element1["rank"])] )
-            serenaders[element2["name"]].set_rank( [serenadeds[element2["rank"]][rank_key] for rank_key in sorted(element2["rank"])] )
-
+    """ Loop the algorithm till its end """
     serenade_end : bool = False
     while not serenade_end:
         serenade_end = True
+        """ First, each serenader has to serenade """
         for serenader in serenaders.values():
             serenader.serenade()
+        """ Next, each serenaded replies to his serenaders """
         for serenaded in serenadeds.values():
             serenaded.reply_to_serenaders()
+        """ Finally, if a serenaded has less serenades than his nmax, we do another loop """
         for serenaded in serenadeds.values():
             if serenaded.get_nmax() > serenaded.get_nb_serenades():
                 serenade_end = False
             serenaded.reset_serenades()
 
+    """ Print results """
     for serenader in serenaders.values():
         print(f"{serenader.get_name()} : {serenader.get_name_of_first()}")
 
 if __name__ == "__main__":
-    sources = yaml.load(open("sources2.yml"), Loader=yaml.Loader)
+    if len(sys.argv) < 2:
+        print("You have to specify a YAML source file!")
+        sys.exit(-1)
+
+    try:
+        sources = yaml.load(open(sys.argv[1]), Loader=yaml.Loader)
+    except FileNotFoundError:
+        print("The specified file is incorrect.")
+        sys.exit(-1)
+
     #check_yaml(sources)
-    stable_mariage_algorithm(sources)
+    stable_marriage_algorithm(sources)
