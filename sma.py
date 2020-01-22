@@ -186,12 +186,13 @@ def stable_marriage_algorithm(sources):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("You have to specify a YAML source file!")
+        print("Usage: python sma.py <source_file>")
         sys.exit(-1)
 
     try:
         sources = yaml.load(open(sys.argv[1]), Loader=yaml.Loader)
     except FileNotFoundError:
-        print("The specified file is incorrect.")
+        print("The specified file is incorrect")
         sys.exit(-1)
 
     #check_yaml(sources)
