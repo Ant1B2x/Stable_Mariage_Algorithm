@@ -65,77 +65,86 @@ class Serenaded(__Parent_Serenade):
                 self.__serenades[rank].refused()
 
 """ Check integrity of the YAML source file """
+# refaire partie dictionnaire + valeurs rank
 def check_yaml(sources):
     print("********************************")
     print("Checking YAML file integrity...")
+
+    """ Check if the YAML files has all requiered fields """
     if "group1_serenading" not in sources.keys():
         print("missing group1_serenading boolean")
-        sys.exit(-1)
+        sys.exit(255)
     if "group1" not in sources.keys():
         print("missing group1 list")
-        sys.exit(-1)
+        sys.exit(255)
     if "group2" not in sources.keys():
         print("missing group2 list")
-        sys.exit(-1)
+        sys.exit(255)
+
+    """ Check if each value of each group has name, rank and nmax """
     group1_serenading : bool = sources["group1_serenading"]
     group1 : list = sources["group1"]
     group2 : list = sources["group2"]
+    """ Check name, rank, nmax for group1 """
     for i in range(len(group1)):
+        """ nmax is only significant when the group1 is serenaded """
         for key in ["name", "rank", "nmax"] if not group1_serenading else ["name", "rank"]:
             if key not in group1[i]:
-                print(f"{key} key missing in group1, element {i}")
-                sys.exit(-1)
+                print(f"{key} key missing (in group1, element {i})")
+                sys.exit(255)
+            if group1[i]["nmax"] < 1:
+                print(f"nmax < 1 (in group1, element {group1[i]['name']})")
+                sys.exit(255)
+    """ Check name, rank, nmax for group2 """
     for i in range(len(group2)):
+        """ nmax is only significant when the group2 is serenaded """
         for key in ["name", "rank", "nmax"] if group1_serenading else ["name", "rank"]:
             if key not in group2[i]:
-                print(f"{key} key missing in group2, element {i}")
-                sys.exit(-1)
+                print(f"{key} key missing (in group2, element {i})")
+                sys.exit(255)
+            if group2[i]["nmax"] < 1:
+                print(f"nmax < 1 (in group2, element {group2[i]['name']})")
+                sys.exit(255)
 
+    """ Check if group1 has no duplicates """
     if len( list(element["name"] for element in group1) ) != len( set(element["name"] for element in group1) ):
         print("group1 has duplicate")
-        sys.exit(-1)
-
+        sys.exit(255)
+    """ Check if group2 has no duplicates """
     if len( list(element["name"] for element in group2) ) != len( set(element["name"] for element in group2) ):
         print("group2 has duplicate")
-        sys.exit(-1)
+        sys.exit(255)
 
+    """ Check if each value of "ranks" dictionaries exists in the other group """
     group1_names : set = set(element["name"] for element in group1)
     group2_names : set = set(element["name"] for element in group2)
+    """ Check "ranks" values for group1 """
     for element in group1:
-        for rank_element in element["rank"]:
-            if rank_element not in group2_names:
-                print(f"{rank_element} not in group2 names")
-                sys.exit(-1)
+        for rank_value in element["rank"].values():
+            if rank_value not in group2_names:
+                print(f"{rank_value} not in group2 names (in group1, element {element['name']})")
+                sys.exit(255)
+    """ Check "ranks" values for group2 """
     for element in group2:
-        for rank_element in element["rank"]:
-            if rank_element not in group1_names:
-                print(f"{rank_element} not in group1 names")
-                sys.exit(-1)
+        for rank_value in element["rank"].values():
+            if rank_value not in group1_names:
+                print(f"{rank_value} not in group1 names (in group2, element {element['name']})")
+                sys.exit(255)
 
+    """ Check if each element of group1 has ranked all elements from the group2 """
     for element in group1:
         if len(element["rank"]) < len(group2_names):
-            print(f"not enough ranked values in group1, element {element['name']} ")
+            print(f"not enough ranked values (in group1, element {element['name']})")
         elif len(element["rank"]) > len(group2_names):
-            print(f"too many ranked values in group1, element {element['name']}")
-
+            print(f"too many ranked values (in group1, element {element['name']})")
+    """ Check if each element of group2 has ranked all elements from the group1 """
     for element in group2:
         if len(element["rank"]) < len(group1_names):
-            print(f"not enough ranked values in group2, element {element['name']} ")
+            print(f"not enough ranked values (in group2, element {element['name']})")
         elif len(element["rank"]) > len(group1_names):
-            print(f"too many ranked values in group2, element {element['name']}")
+            print(f"too many ranked values (in group2, element {element['name']})")
 
-    if group1_serenading:
-        for element in group1:
-            if element["nmax"] < 1:
-                print(f"nmax < 1 at group1, element {element['name']}")
-            elif element["nmax"] > len(group2):
-                print(f"nmax > group2 length at group1, element {element['name']}")
-    else:
-        for element in group2:
-            if element["nmax"] < 1:
-                print(f"nmax < 1 at group2, element {element['name']}")
-            elif element["nmax"] > len(group1):
-                print(f"nmax > group1 length at group2, element {element['name']}")
+    print("OK!")
     print("********************************")
 
 """ Our implementation of stable marriage algorithm :) """
@@ -175,7 +184,7 @@ def stable_marriage_algorithm(sources):
             serenaded.reply_to_serenaders()
         """ Finally, if a serenaded has less serenades than his nmax, we do another loop """
         for serenaded in serenadeds.values():
-            if serenaded.get_nmax() > serenaded.get_nb_serenades():
+            if serenaded.get_nmax() < serenaded.get_nb_serenades():
                 serenade_end = False
             serenaded.reset_serenades()
 
@@ -195,5 +204,5 @@ if __name__ == "__main__":
         print("The specified file is incorrect")
         sys.exit(-1)
 
-    #check_yaml(sources)
+    check_yaml(sources)
     stable_marriage_algorithm(sources)

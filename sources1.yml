@@ -1,42 +1,63 @@
 group1_serenading: True
 group1:
-  - name: "Esteban"
+  - name: "A"
     rank:
-      1: "X"
-      2: "N7"
-      3: "A7"
+      1: "Gamma"
+      2: "Delta"
+      3: "Alpha"
+      4: "Beta"
     nmax: 1
-  - name: "Antoine"
+  - name: "B"
     rank:
-      1: "N7"
-      2: "X"
-      3: "A7"
+      1: "Delta"
+      2: "Alpha"
+      3: "Beta"
+      4: "Gamma"
     nmax: 1
-  - name: "Yvan"
+  - name: "C"
     rank:
-      1: "N7"
-      2: "X"
-      3: "A7"
+      1: "Alpha"
+      2: "Beta"
+      3: "Gamma"
+      4: "Delta"
+    nmax: 1
+  - name: "D"
+    rank:
+      1: "Delta"
+      2: "Gamma"
+      3: "Alpha"
+      4: "Beta"
     nmax: 1
 
 group2:
-  - name: "N7"
+  - name: "Alpha"
     rank:
-      1: "Esteban"
-      2: "Yvan"
-      3: "Antoine"
+      1: "A"
+      2: "B"
+      3: "C"
+      4: "D"
     nmax: 1
 
-  - name: "X"
+  - name: "Beta"
     rank:
-      1: "Antoine"
-      2: "Esteban"
-      3: "Yvan"
+      1: "A"
+      2: "B"
+      3: "C"
+      4: "D"
     nmax: 1
 
-  - name: "A7"
+  - name: "Gamma"
     rank:
-      1: "Yvan"
-      2: "Esteban"
-      3: "Antoine"
+      1: "B"
+      2: "C"
+      3: "A"
+      4: "D"
+    nmax: 1
+
+  - name: "Delta"
+    rank:
+      1: "C"
+      2: "A"
+      3: "B"
+      4: "D"
     nmax: 1

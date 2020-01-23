@@ -1,63 +1,42 @@
 group1_serenading: True
 group1:
-  - name: "A"
+  - name: "Xavier"
     rank:
-      1: "Gamma"
-      2: "Delta"
-      3: "Alpha"
-      4: "Beta"
+      1: "Boston"
+      2: "Atlanta"
+      3: "Chicago"
     nmax: 1
-  - name: "B"
+  - name: "Yolanda"
     rank:
-      1: "Delta"
-      2: "Alpha"
-      3: "Beta"
-      4: "Gamma"
+      1: "Atlanta"
+      2: "Boston"
+      3: "Chicago"
     nmax: 1
-  - name: "C"
+  - name: "Zeus"
     rank:
-      1: "Alpha"
-      2: "Beta"
-      3: "Gamma"
-      4: "Delta"
-    nmax: 1
-  - name: "D"
-    rank:
-      1: "Delta"
-      2: "Gamma"
-      3: "Alpha"
-      4: "Beta"
+      1: "Atlanta"
+      2: "Boston"
+      3: "Chicago"
     nmax: 1
 
 group2:
-  - name: "Alpha"
+  - name: "Atlanta"
     rank:
-      1: "A"
-      2: "B"
-      3: "C"
-      4: "D"
-    nmax: 1
+      1: "Xavier"
+      2: "Yolanda"
+      3: "Zeus"
+    nmax: 10
 
-  - name: "Beta"
+  - name: "Boston"
     rank:
-      1: "A"
-      2: "B"
-      3: "C"
-      4: "D"
-    nmax: 1
+      1: "Yolanda"
+      2: "Xavier"
+      3: "Zeus"
+    nmax: 10
 
-  - name: "Gamma"
+  - name: "Chicago"
     rank:
-      1: "B"
-      2: "C"
-      3: "A"
-      4: "D"
-    nmax: 1
-
-  - name: "Delta"
-    rank:
-      1: "C"
-      2: "A"
-      3: "B"
-      4: "D"
-    nmax: 1
+      1: "Xavier"
+      2: "Yolanda"
+      3: "Zeus"
+    nmax: 10
