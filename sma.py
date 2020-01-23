@@ -65,55 +65,59 @@ class Serenaded(__Parent_Serenade):
                 self.__serenades[rank].refused()
 
 """ Check integrity of the YAML source file """
-# refaire partie dictionnaire + valeurs rank
 def check_yaml(sources):
     print("********************************")
     print("Checking YAML file integrity...")
 
     """ Check if the YAML files has all requiered fields """
-    if "group1_serenading" not in sources.keys():
-        print("missing group1_serenading boolean")
-        sys.exit(255)
-    if "group1" not in sources.keys():
-        print("missing group1 list")
-        sys.exit(255)
-    if "group2" not in sources.keys():
-        print("missing group2 list")
-        sys.exit(255)
+    for key in ["group1_serenading", "group1", "group2"]:
+        if key not in sources.keys():
+            print(f"missing {key} key in source file")
+            sys.exit(10)
 
-    """ Check if each value of each group has name, rank and nmax """
-    group1_serenading : bool = sources["group1_serenading"]
-    group1 : list = sources["group1"]
-    group2 : list = sources["group2"]
-    """ Check name, rank, nmax for group1 """
+    """ Check if each field has the correct type """
+    if type(sources["group1_serenading"]) != bool:
+        print("group1_serenading should be a boolean")
+        sys.exit(20)
+    for group in ["group1", "group2"]:
+        if type(sources[group]) != list:
+            print(f"{group} should be a list")
+            sys.exit(21)
+
+    """ Load data from source file """
+    group1_serenading: bool = sources["group1_serenading"]
+    group1: list = sources["group1"]
+    group2: list = sources["group2"]
+
+    """ Check if each value of group1 has name, rank and nmax """
     for i in range(len(group1)):
         """ nmax is only significant when the group1 is serenaded """
         for key in ["name", "rank", "nmax"] if not group1_serenading else ["name", "rank"]:
             if key not in group1[i]:
                 print(f"{key} key missing (in group1, element {i})")
-                sys.exit(255)
+                sys.exit(30)
             if group1[i]["nmax"] < 1:
                 print(f"nmax < 1 (in group1, element {group1[i]['name']})")
-                sys.exit(255)
-    """ Check name, rank, nmax for group2 """
+                sys.exit(31)
+    """ Check if each value of group2 has name, rank and nmax """
     for i in range(len(group2)):
         """ nmax is only significant when the group2 is serenaded """
         for key in ["name", "rank", "nmax"] if group1_serenading else ["name", "rank"]:
             if key not in group2[i]:
                 print(f"{key} key missing (in group2, element {i})")
-                sys.exit(255)
+                sys.exit(30)
             if group2[i]["nmax"] < 1:
                 print(f"nmax < 1 (in group2, element {group2[i]['name']})")
-                sys.exit(255)
+                sys.exit(31)
 
-    """ Check if group1 has no duplicates """
+    """ Check if each group has no duplicates """
     if len( list(element["name"] for element in group1) ) != len( set(element["name"] for element in group1) ):
         print("group1 has duplicate")
-        sys.exit(255)
+        sys.exit(40)
     """ Check if group2 has no duplicates """
     if len( list(element["name"] for element in group2) ) != len( set(element["name"] for element in group2) ):
         print("group2 has duplicate")
-        sys.exit(255)
+        sys.exit(40)
 
     """ Check if each value of "ranks" dictionaries exists in the other group """
     group1_names : set = set(element["name"] for element in group1)
@@ -123,26 +127,30 @@ def check_yaml(sources):
         for rank_value in element["rank"].values():
             if rank_value not in group2_names:
                 print(f"{rank_value} not in group2 names (in group1, element {element['name']})")
-                sys.exit(255)
+                sys.exit(50)
     """ Check "ranks" values for group2 """
     for element in group2:
         for rank_value in element["rank"].values():
             if rank_value not in group1_names:
                 print(f"{rank_value} not in group1 names (in group2, element {element['name']})")
-                sys.exit(255)
+                sys.exit(50)
 
     """ Check if each element of group1 has ranked all elements from the group2 """
     for element in group1:
         if len(element["rank"]) < len(group2_names):
             print(f"not enough ranked values (in group1, element {element['name']})")
+            sys.exit(60)
         elif len(element["rank"]) > len(group2_names):
             print(f"too many ranked values (in group1, element {element['name']})")
+            sys.exit(61)
     """ Check if each element of group2 has ranked all elements from the group1 """
     for element in group2:
         if len(element["rank"]) < len(group1_names):
             print(f"not enough ranked values (in group2, element {element['name']})")
+            sys.exit(60)
         elif len(element["rank"]) > len(group1_names):
             print(f"too many ranked values (in group2, element {element['name']})")
+            sys.exit(61)
 
     print("OK!")
     print("********************************")
