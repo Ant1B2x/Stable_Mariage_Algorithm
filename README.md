@@ -14,7 +14,7 @@ We had to let the user able to create source files and / or to modify existing o
 
 We decided to go with Python because it's an high-level language which is quite simple to use and very flexible. However, Python isn't robust and performing. If we had to make this algorithm efficient for an high-number of elements, we would choose C++, Rust, or another low-level language.
 
-Regarding source files, we decided to use the YAML language. It is an alternative of XML / JSON. YAML has the advantage of being human-readable. Indeed, YAML has a minimal syntax. Another reason for choosing YAML is the fact that Python has a YAML parser called PyYAML which make YAML files easy to use in Python.
+Regarding source files, we decided to use the YAML language. It is an alternative of XML / JSON. YAML has the advantage of being human-readable. Indeed, its syntax is minimal. Another reason for choosing YAML is the fact that Python has a YAML parser called PyYAML which make YAML files easy to use in Python.
 
 ## Description of the stable marriage problem
 
