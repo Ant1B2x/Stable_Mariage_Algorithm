@@ -30,7 +30,7 @@ In order to make our algorithm "generic" (we didn't wanted to name groups univer
 
 ## How we implemented the algorithm
 
-In this section, I will only describe implementation of the stable marriage algorithm. Indeed, I will skip the part about the check of source files and how we load data from it, because it just consists in manipulating Python data types and it's not really interesting. Just note that we have a `check_yaml` procedure which checks a source file and exit the program if an error is found.
+In this section, I will only describe implementation of the stable marriage algorithm. Indeed, I will skip the part about the check of source files and how we load data from it, because it just consists in manipulating Python data types and it's not really interesting. Just note that we have a `check_yaml` procedure which checks a source file and exit the program if an error is found. We also have a `decode_yaml` procedure which load the content from a source file and return two list of corresponding Serenader / Serenaded objects. 
 
 We used 2 concrete classes and 1 abstract class. The abstract class (`__Parent_Serenade`) contain generic attributes and methods for both `Serenader` and `Serenaded` class. These classes are described in the following diagram:
 
@@ -38,45 +38,54 @@ We used 2 concrete classes and 1 abstract class. The abstract class (`__Parent_S
 
 We'll not deeply explain what the classes methods do because the code is quite simple.
 
-Finally, we have the `stable_marriage_algorithm` program which take the sources, load the data from it, and loop the algorithm till its end. As we said earlier, the first part isn't interesting. Here's the code of the second part:
+Finally, we have the `stable_marriage_algorithm` program which take the two lists (of Serenaded and Serenader objects) and loop the algorithm till its end. Here's its code:
 
 ```python
-""" Loop the algorithm till its end """
-serenade_end : bool = False
-while not serenade_end:
-    serenade_end = True
-    """ First, each serenader has to serenade """
-    for serenader in serenaders.values():
-        serenader.serenade()
-    """ Next, each serenaded replies to his serenaders """
-    for serenaded in serenadeds.values():
-        serenaded.reply_to_serenaders()
-    """ Finally, if a serenaded has less serenades than his nmax, we do another loop """
-    for serenaded in serenadeds.values():
-        if serenaded.get_nmax() < serenaded.get_nb_serenades():
-			serenade_end = False
-        	serenaded.reset_serenades()
+def stable_marriage_algorithm(serenaders : list, serenadeds : list):
+    serenade_end: bool = False
+    """ Loop the algorithm till its end """
+    while not serenade_end:
+        serenade_end = True
+        """ First, each serenader has to serenade """
+        for serenader in serenaders:
+            serenader.serenade()
+        """ Next, each serenaded replies to his serenaders """
+        for serenaded in serenadeds:
+            serenaded.reply_to_serenaders()
+        """ Finally, if a serenaded has more serenades than his nmax, we do another loop """
+        for serenaded in serenadeds:
+            if serenaded.get_nb_serenades() > serenaded.get_nmax():
+                serenade_end = False
+            serenaded.reset_serenades()
 
-""" Print results """
-for serenader in serenaders.values():
-	print(f"{serenader.get_name()} : {serenader.get_name_of_first()}")
+    """ Print results """
+    for serenader in serenaders:
+        for i in range(min(serenader.get_nmax(), len(serenader.get_rank()))):
+            print(f"{serenader.get_name()} : {serenader.get_rank()[i].get_name()}")
 ```
 
 This code is a simple implementation of the following pseudo-code:
 
-```c
+```pascal
 finished <- False
+// loop the algorithm till its end
 while not finished loop
 	finished <- True
-	each serenader serenade to his first choice
-	each serenaded element reply to its serenaders
+	each serenader serenades to his first choice
+	each serenaded element replies to its serenaders
 	if a serenaded element has more serenades than its maximum capacity
 		finished <- False // loop again
 	end if
 end loop
+// print results
+for all serenader loop
+    for i in the minimum between (nmax) and (nb of ranked values (after deletions)) loop
+    	print serenader / serenaded couple
+    end loop
+end loop
 ```
 
-When replying to serenaders, a serenaded element decline or accept a serenader element. If a serenader is declined, he will remove his first choice from his list of choices and go to the next element.
+When replying to serenaders, a serenaded element decline or accept a serenader element. If a serenader is declined, he will remove the serenaded element from his list of choices and go to next elements.
 
 ## How to use the source files
 
